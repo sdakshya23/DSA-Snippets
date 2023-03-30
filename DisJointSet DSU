@@ -1,0 +1,61 @@
+class DisJointSet{
+	vector<int>rank,parent,size;
+public:
+	DisJointSet(int n){
+		rank.resize(n+1,0);
+		parent.resize(n+1,0);
+		size.resize(n+1);
+		for(int i=0;i<=n;i++){
+			parent[i]=i;
+		}
+		for(int i=0;i<=n;i++){
+			size[i]=1;
+		}
+	}
+	int findUpar(int node){
+		if(parent[node] == node){
+			return node;
+		}
+	//simply returning the parent[node] would be a log(n)
+	//process for path compression each time we find a parent 
+	//we can store the node to the parent array of the resp node
+		return parent[node] = findUpar(parent[node]);
+	}
+	void UnionByRank(int u,int v){
+		int ult_pu = findUpar(u);
+		int ult_pv = findUpar(v);
+		if(ult_pv == ult_pu){
+			return;
+		} 
+		if(rank[ult_pv]<rank[ult_pu]){
+			parent[ult_pv] = ult_pu;
+		}
+		else if(rank[ult_pu]<rank[ult_pv]){
+			parent[ult_pu] = ult_pv;
+		}
+		else{
+			parent[ult_pv] = ult_pu;
+			rank[ult_pu]++;
+		}
+	}
+	void UnionBySize(int u,int v){
+		int ult_pu = findUpar(u);
+		int ult_pv = findUpar(v);
+		if(ult_pv == ult_pu){
+			return;
+		}
+		if(size[ult_pv] == size[ult_pu]){
+			parent[ult_pv]=parent[ult_pu];
+			size[ult_pu]+=size[ult_pv];
+		}
+		else if(size[ult_pu]<size[ult_pv]){
+			parent[ult_pu] = ult_pv;
+			size[ult_pv]+=size[ult_pu];
+		}
+		else{
+			parent[ult_pv]=ult_pu;
+			size[ult_pu]+=size[ult_pv];
+		}
+	}
+
+};
